@@ -1,0 +1,90 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: CH03PE24 Test
+      id: ch03pe24-test
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: CH03PE24 Test
+        setup-command: javac CH03PE24.java
+        command: java CH03PE24
+        input: ''
+        expected-output: Intro to Programming
+        comparison-method: exact
+        timeout: 2
+        max-score: 2
+    - name: CH03PE25 Test
+      id: ch03pe25-test
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: CH03PE25 Test
+        setup-command: javac CH03PE25.java
+        command: java CH03PE25
+        input: ''
+        expected-output: '11'
+        comparison-method: exact
+        timeout: 2
+        max-score: 2
+    - name: CH03PE26 Test
+      id: ch03pe26-test
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: CH03PE26 Test
+        setup-command: javac CH03PE26.java
+        command: java CH03PE26
+        input: This is a string to test your code.
+        expected-output: This is a string to test your code. 35
+        comparison-method: contains
+        timeout: 2
+        max-score: 2
+    - name: CH03PE31 Test
+      id: ch03pe31-test
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: CH03PE31 Test
+        setup-command: javac CH03PE31.java
+        command: java CH03PE31
+        input: |-
+          10
+          6
+        expected-output: The minimum integer is 6
+        comparison-method: contains
+        timeout: 2
+        max-score: 2
+    - name: CH03PE32 Test
+      id: ch03pe32-test
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: CH03PE32 Test
+        setup-command: javac CH03PE32.java
+        command: java CH03PE32
+        input: |-
+          12
+          28
+          13
+        expected-output: The maximum integer is 28
+        comparison-method: contains
+        timeout: 2
+        max-score: 2
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        CH03PE24-TEST_RESULTS: "${{steps.ch03pe24-test.outputs.result}}"
+        CH03PE25-TEST_RESULTS: "${{steps.ch03pe25-test.outputs.result}}"
+        CH03PE26-TEST_RESULTS: "${{steps.ch03pe26-test.outputs.result}}"
+        CH03PE31-TEST_RESULTS: "${{steps.ch03pe31-test.outputs.result}}"
+        CH03PE32-TEST_RESULTS: "${{steps.ch03pe32-test.outputs.result}}"
+      with:
+        runners: ch03pe24-test,ch03pe25-test,ch03pe26-test,ch03pe31-test,ch03pe32-test
